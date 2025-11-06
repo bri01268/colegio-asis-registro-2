@@ -1,0 +1,227 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9ff;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+/* Fondo con transparencia */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("img/fondo.jpg"); /* Cambia por la ruta de tu imagen */
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3; /*  Ajusta la transparencia: 0.1 (más transparente) → 1 (sin transparencia) */
+  z-index: -1; /*  Mantiene el fondo detrás del contenido */
+}
+.logo1 {
+  width: 300px;
+  height: 300px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translateY(-90px);
+}
+
+.encabezado {
+  background-color: #821616;
+  color: white;
+  padding: 15px 30px;
+  display: flex;              /* Alinea elementos en fila */
+  align-items: center;        /* Centra verticalmente logo y texto */
+  justify-content: flex-start;/* Todo a la izquierda */
+  gap: 15px;                  /* Espacio entre logo y texto */
+}
+
+.logo {
+  width: 60px;     /* Tamaño del logo (puedes ajustarlo) */
+  height: 60px;
+  object-fit: contain;
+}
+
+.nombre-colegio {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 0;
+}
+.select-busqueda {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+#buscar {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+
+.titulo-principal {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+
+  /* Degradado rojo */
+  background: linear-gradient(to right, #b30000, #ff4d4d);
+  background-clip: text;
+  color: transparent;
+
+  /* Reflejo debajo del texto */
+  -webkit-box-reflect: below 2px 
+      linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+
+
+
+/* Contenedor principal centrado y hacia abajo */
+.contenido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* centra verticalmente buscador y tabla */
+  padding: 40px 0;
+}
+
+/* Buscador y botón agregar */
+.buscador {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.buscador input {
+  padding: 8px;
+  width: 250px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn-agregar,
+.btn-eliminar {
+  background-color: #007bff;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-left: 5px;
+}
+
+.btn-agregar:hover,
+.btn-eliminar:hover {
+  transform: scale(1.1);
+}
+
+.icono-btn {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+
+
+
+/* Tabla centrada */
+.tabla {
+  border-collapse: collapse;
+  width: 90%;
+  max-width: 1000px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.tabla th, .tabla td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.tabla th {
+  background: #007bff;
+  color: white;
+}
+
+.btn-eliminar {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-eliminar:hover {
+  background: #c82333;
+}
+
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-contenido {
+  background-color: white;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.modal-contenido input,
+.modal-contenido select {
+  display: block;
+  width: 90%;
+  margin: 8px auto;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.btn-guardar {
+  background-color: #004aad;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cerrar {
+  float: right;
+  font-size: 22px;
+  cursor: pointer;
+  color: red;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Alumnos</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    
+  <header class="encabezado">
+  <img src="img/logo.png" alt="Logo del colegio" class="logo">
+  <h1 class="nombre-colegio">Colegio Asís</h1>
+</header>
+
+<h2 class="titulo-principal">REGISTRO DE ESTUDIANTES DEL DEPARTAMENTO DE PSICOLOGÍA</h2>
+
+    
+
+  <main class="contenido">
+    <img src="img/logo_psico.png" alt="Logo de PSICOLOGÍA" class="logo1">
+    
+
+    <div class="buscador">
+      <select id="tipoBusqueda" class="select-busqueda">
+        <option value="dni">DNI</option>
+        <option value="apellidos">Apellidos</option>
+      </select>
+      <input type="text" id="buscar" placeholder="Buscar por DNI...">
+      <button class="btn-agregar" id="abrirModal"><i class="fas fa-plus"></i> <img src="iconos/guardar.png" alt="Agregar" class="icono-btn"> </button>
+      <button class="btn-eliminar" id="eliminarRegistro"> <img src="iconos/eliminar.png" alt="Eliminar" class="icono-btn"></button>
+    </div>
+    
+
+    <table class="tabla" id="tablaAlumnos">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Código</th>
+          <th>DNI</th>
+          <th>Apellidos y Nombres</th>
+          <th>Sexo</th>
+          <th>Fecha Nac.</th>
+          <th>Edad</th>
+          <th>Tutor</th>
+          <th>Salón</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpoTabla"></tbody>
+    </table>
+  </main>
+
+  
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar" id="cerrarModal">&times;</span>
+      <h3>Agregar Alumno</h3>
+      <form id="formAlumno">
+        <input type="text" name="codigo" placeholder="Código" required>
+        <input type="text" name="dni" placeholder="DNI" required>
+        <input type="text" name="nombre" placeholder="Apellidos y Nombres" required>
+        <select name="sexo" required>
+          <option value="">Sexo</option>
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+        </select>
+        <input type="date" name="fechaNac" required>
+        <input type="number" name="edad" placeholder="Edad" required>
+        <input type="text" name="tutor" placeholder="Tutor" required>
+        <input type="text" name="salon" placeholder="Salón" required>
+        <button type="submit" class="btn-guardar">Guardar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
