@@ -1,58 +1,64 @@
 const modal = document.getElementById("modal");
-    const abrirModal = document.getElementById("abrirModal");
-    const cerrarModal = document.getElementById("cerrarModal");
-    const cuerpoTabla = document.getElementById("cuerpoTabla");
+const abrirModal = document.getElementById("abrirModal");
+const cerrarModal = document.getElementById("cerrarModal");
+const cuerpoTabla = document.getElementById("cuerpoTabla");
 
-    abrirModal.onclick = () => modal.style.display = "block";
-    cerrarModal.onclick = () => modal.style.display = "none";
-    window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+abrirModal.onclick = () => modal.style.display = "block";
+cerrarModal.onclick = () => modal.style.display = "none";
+window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
 
-    // Cargar alumnos del CSV
-    async function cargarAlumnos() {
-      const res = await fetch("gestor.php?accion=listar");
-      const data = await res.json();
-      cuerpoTabla.innerHTML = "";
-      data.forEach((alumno, i) => {
-        cuerpoTabla.innerHTML += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${alumno.codigo}</td>
-            <td>${alumno.dni}</td>
-            <td>${alumno.nombre}</td>
-            <td>${alumno.sexo}</td>
-            <td>${alumno.fechaNac}</td>
-            <td>${alumno.edad}</td>
-            <td>${alumno.tutor}</td>
-            <td>${alumno.salon}</td>
-            <td><button class="btn-eliminar" onclick="eliminarAlumno('${alumno.codigo}')"><i class="fas fa-trash"></i></button></td>
-          </tr>
-        `;
-      });
-    }
+// Cargar alumnos desde SQL Server
+async function cargarAlumnos() {
+  const res = await fetch("http://localhost:3000/gestor");
+  const data = await res.json();
+  cuerpoTabla.innerHTML = "";
+  data.forEach((alumno, i) => {
+    cuerpoTabla.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${alumno.codigo}</td>
+        <td>${alumno.dni}</td>
+        <td>${alumno.nombre}</td>
+        <td>${alumno.sexo}</td>
+        <td>${alumno.fechaNac ? alumno.fechaNac.substring(0,10) : ''}</td>
+        <td>${alumno.edad}</td>
+        <td>${alumno.tutor}</td>
+        <td>${alumno.salon}</td>
+        <td><button class="btn-eliminar" onclick="eliminarAlumno('${alumno.codigo}')"><i class="fas fa-trash"></i></button></td>
+      </tr>
+    `;
+  });
+}
 
-    cargarAlumnos();
+cargarAlumnos();
 
-    // Agregar alumno
-    document.getElementById("formAlumno").addEventListener("submit", async e => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      formData.append("accion", "agregar");
-      await fetch("gestor.php", { method: "POST", body: formData });
-      modal.style.display = "none";
-      cargarAlumnos();
-    });
+// Agregar alumno
+document.getElementById("formAlumno").addEventListener("submit", async e => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const datos = Object.fromEntries(formData);
+  await fetch("http://localhost:3000/gestor/agregar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos)
+  });
+  modal.style.display = "none";
+  cargarAlumnos();
+});
 
-    // Eliminar alumno
-    async function eliminarAlumno(codigo) {
-      if (!confirm("¿Deseas eliminar este alumno?")) return;
-      const formData = new FormData();
-      formData.append("accion", "eliminar");
-      formData.append("codigo", codigo);
-      await fetch("gestor.php", { method: "POST", body: formData });
-      cargarAlumnos();
-    }
+// Eliminar alumno
+async function eliminarAlumno(codigo) {
+  if (!confirm("¿Deseas eliminar este alumno?")) return;
+  await fetch("http://localhost:3000/gestor/eliminar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ codigo })
+  });
+  cargarAlumnos();
+}
 
-    document.addEventListener("DOMContentLoaded", () => {
+// Buscador local
+document.addEventListener("DOMContentLoaded", () => {
   const inputBuscar = document.getElementById("buscar");
   const tipoBusqueda = document.getElementById("tipoBusqueda");
   const tabla = document.getElementById("tablaAlumnos");
@@ -67,24 +73,10 @@ const modal = document.getElementById("modal");
       const celdas = fila.getElementsByTagName("td");
       let textoComparar = "";
 
-      if (tipo === "dni") textoComparar = celdas[2].textContent.toLowerCase();       // Columna DNI
-      else if (tipo === "apellidos") textoComparar = celdas[3].textContent.toLowerCase(); // Columna Apellidos
+      if (tipo === "dni") textoComparar = celdas[2].textContent.toLowerCase();
+      else if (tipo === "apellidos") textoComparar = celdas[3].textContent.toLowerCase();
 
       fila.style.display = textoComparar.includes(filtro) ? "" : "none";
-    }
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const tipoBusqueda = document.getElementById("tipoBusqueda");
-  const inputBuscar = document.getElementById("buscar");
-
-  // Actualizar el placeholder según la opción seleccionada
-  tipoBusqueda.addEventListener("change", () => {
-    if (tipoBusqueda.value === "dni") {
-      inputBuscar.placeholder = "Buscar por DNI...";
-    } else if (tipoBusqueda.value === "apellidos") {
-      inputBuscar.placeholder = "Buscar alumno...";
     }
   });
 });

@@ -27,23 +27,26 @@ body::before {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  transform: translateY(-90px);
+  transform: translateY(-10px);
 }
 
+/* === ENCABEZADO === */
 .encabezado {
   background-color: #821616;
   color: white;
-  padding: 15px 30px;
-  display: flex;              /* Alinea elementos en fila */
-  align-items: center;        /* Centra verticalmente logo y texto */
-  justify-content: flex-start;/* Todo a la izquierda */
-  gap: 15px;                  /* Espacio entre logo y texto */
+  padding: 10px 30px;
+  display: flex;
+  align-items: center;       /* Centra verticalmente logo y texto */
+  justify-content: flex-start; /* Logo a la izquierda, texto al lado derecho */
+  gap: 15px;                 /* Espacio entre logo y texto */
+  white-space: nowrap;       /* Evita salto de línea */
 }
 
 .logo {
-  width: 60px;     /* Tamaño del logo (puedes ajustarlo) */
-  height: 60px;
+  width: 70px;   /* Tamaño del logo */
+  height: 70px;
   object-fit: contain;
+  flex-shrink: 0; /* Evita que se reduzca el tamaño del logo */
 }
 
 .nombre-colegio {
@@ -51,7 +54,9 @@ body::before {
   font-size: 1.8em;
   font-weight: bold;
   margin: 0;
+  line-height: 1;
 }
+
 .select-busqueda {
   padding: 6px 10px;
   border: 1px solid #ccc;
@@ -122,7 +127,7 @@ body::before {
 .btn-eliminar {
   background-color: #007bff;
   border: none;
-  padding: 8px 10px;
+  padding: 7px 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -145,23 +150,59 @@ body::before {
 
 /* Tabla centrada */
 .tabla {
-  border-collapse: collapse;
-  width: 90%;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 95%;
   max-width: 1000px;
-  background: white;
+  background: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-.tabla th, .tabla td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 15px auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 15px;
 }
 
 .tabla th {
-  background: #007bff;
+  background: linear-gradient(135deg, #007bff, #0056d8);
   color: white;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 10px;
+  border: none;
+  white-space: nowrap; /* evita que el texto baje de línea */
+}
+
+.tabla td {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px;
+  text-align: center;
+}
+
+.tabla tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.tabla tr:hover {
+  background-color: #e8f1ff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* === ENVOLTORIO PARA SCROLL EN MÓVILES === */
+.tabla-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.tabla-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tabla-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 123, 255, 0.6);
+  border-radius: 4px;
 }
 
 .btn-eliminar {
@@ -225,3 +266,223 @@ body::before {
   cursor: pointer;
   color: red;
 }
+
+/* ================================
+   ESTILOS RESPONSIVE
+   ================================ */
+
+/* Tablets (pantallas entre 768px y 1024px) */
+@media screen and (max-width: 1024px) {
+  .encabezado {
+    flex-direction: row;        /* Mantiene logo y texto en línea */
+    justify-content: flex-start;/* Los alinea a la izquierda */
+    align-items: center;        /* Centra verticalmente */
+    text-align: left;
+    gap: 10px;
+    padding: 10px 20px;         /* Espaciado lateral */
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nombre-colegio {
+    font-size: 1.4em;
+  }
+
+
+  .titulo-principal {
+    font-size: 24px;
+  }
+.logo1 {
+  width: 280px;
+  height: 280px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translateY(-280px); /* en vez de -90px */
+  margin: 0 auto;
+  display: block;
+}
+
+  .tabla {
+    width: 95%;
+    font-size: 14px;
+    transform: translateY(-280px);
+  }
+
+  .buscador {
+    flex-wrap: wrap;
+    gap: 8px;
+    transform: translateY(-270px);
+  }
+
+  .buscador input {
+    width: 70%;
+  }
+
+  .btn-agregar {
+    padding: 8px 12px;
+  }
+  
+}
+
+/* Celulares (pantallas menores a 768px) */
+@media screen and (max-width: 768px) {
+  body {
+    height: auto;
+  }
+
+   .encabezado {
+    flex-direction: row;        /* Mantiene logo y texto en línea */
+    justify-content: flex-start;/* Los alinea a la izquierda */
+    align-items: center;        /* Centra verticalmente */
+    text-align: left;
+    gap: 10px;
+    padding: 10px 20px;         /* Espaciado lateral */
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nombre-colegio {
+    font-size: 1.4em;
+  }
+
+  .contenido {
+    padding: 20px 10px;
+    justify-content: flex-start;
+  }
+
+  .titulo-principal {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .buscador {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .buscador input,
+  .select-busqueda {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .btn-agregar {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+  }
+
+  .tabla {
+    width: 100%;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .tabla th, .tabla td {
+    padding: 8px;
+  }
+
+  .tabla {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Hacer la tabla desplazable horizontalmente */
+  .tabla {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Modal ajustado a móviles */
+  .modal-contenido {
+    width: 90%;
+    margin: 30% auto;
+    padding: 15px;
+  }
+
+  .btn-guardar {
+    width: 100%;
+    padding: 10px;
+  }
+  .logo1 {
+  width: 300px;
+  height: 300px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translateY(-10px);
+}
+}
+
+/* Celulares pequeños (menores a 480px) */
+@media screen and (max-width: 480px) {
+  .nombre-colegio {
+    font-size: 1.1em;
+  }
+
+  .titulo-principal {
+    font-size: 18px;
+  }
+
+  .logo1 {
+    width: 220px;
+    height: 220px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transform: translateY(-20px);
+  }
+
+  .buscador input{
+    font-size: 13px;
+    width: 100%;
+  }
+  .select-busqueda {
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .btn-agregar,
+  .btn-eliminar {
+    font-size: 13px;
+    padding: 8px 10px;
+    width: 100%;
+  }
+
+  .modal-contenido {
+    margin-top: 40%;
+    padding: 10px;
+  }
+
+  /* === TABLA AJUSTADA === */
+  .tabla-container {
+    padding: 0 6px;
+  }
+
+  .tabla {
+    width: 700px; /* mantiene proporción visible y scroll horizontal */
+    font-size: 13px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .tabla th,
+  .tabla td {
+    padding: 6px 8px;
+  }
+
+  .tabla th {
+    font-size: 12px;
+  }
+}
+

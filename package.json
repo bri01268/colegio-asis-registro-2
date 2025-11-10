@@ -1,0 +1,27 @@
+{
+  "name": "colegio-asis-registro-2",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bri01268/colegio-asis-registro-2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bri01268/colegio-asis-registro-2/issues"
+  },
+  "homepage": "https://github.com/bri01268/colegio-asis-registro-2#readme",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mssql": "^12.1.0"
+  }
+}
