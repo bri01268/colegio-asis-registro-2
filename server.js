@@ -8,18 +8,17 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// ⚙️ Configura tu conexión a SQL Server
+// ⚙️ Configuración de conexión (Render + Azure SQL)
 const dbConfig = {
-  user: "sa",
-  password: "jefer290423",
-  server: "DESKTOP-6HNM4F3",  // tu nombre de máquina
-  database: "alumnosdb",
+  user: process.env.DB_USER || "jeryroldan",       // usuario de Azure
+  password: process.env.DB_PASS || "jefer290423@", // contraseña segura
+  server: process.env.DB_SERVER || "colegio-asis.database.windows.net", // servidor Azure
+  database: process.env.DB_NAME || "alumnosdb",
   options: {
-    encrypt: false,
-    trustServerCertificate: true,
+    encrypt: true,                 // obligatorio en Azure
+    trustServerCertificate: false, // mantener en false
   },
 };
-
 
 // 🔹 LISTAR todos los alumnos
 app.get("/gestor", async (req, res) => {
@@ -49,7 +48,7 @@ app.post("/gestor/agregar", async (req, res) => {
       .input("salon", sql.VarChar, salon)
       .query(`INSERT INTO dbo.Alumnos (codigo, dni, nombre, sexo, fechaNac, edad, tutor, salon)
               VALUES (@codigo, @dni, @nombre, @sexo, @fechaNac, @edad, @tutor, @salon)`);
-    res.send("Alumno agregado correctamente");
+    res.send("✅ Alumno agregado correctamente");
   } catch (err) {
     console.error("Error al agregar:", err);
     res.status(500).send("Error al agregar alumno");
@@ -64,17 +63,17 @@ app.post("/gestor/eliminar", async (req, res) => {
     await pool.request()
       .input("codigo", sql.VarChar, codigo)
       .query("DELETE FROM dbo.Alumnos WHERE codigo = @codigo");
-    res.send("Alumno eliminado correctamente");
+    res.send("🗑️ Alumno eliminado correctamente");
   } catch (err) {
     console.error("Error al eliminar:", err);
     res.status(500).send("Error al eliminar alumno");
   }
 });
 
-// 🔹 BUSCAR alumno por DNI o Apellidos
+// 🔹 BUSCAR alumno
 app.get("/gestor/buscar", async (req, res) => {
   const { tipo, valor } = req.query;
-  let columna = tipo === "dni" ? "dni" : "nombre";
+  const columna = tipo === "dni" ? "dni" : "nombre";
   try {
     const pool = await sql.connect(dbConfig);
     const result = await pool.request()
@@ -87,5 +86,6 @@ app.get("/gestor/buscar", async (req, res) => {
   }
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`✅ Servidor Node.js corriendo en http://localhost:${PORT}`));
+// 🔹 Servidor en Render
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Servidor Node.js corriendo en puerto ${PORT}`));
