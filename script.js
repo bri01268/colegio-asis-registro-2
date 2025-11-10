@@ -9,7 +9,7 @@ window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
 
 // Cargar alumnos desde SQL Server
 async function cargarAlumnos() {
-  const res = await fetch("http://localhost:3000/gestor");
+  const res = await fetch("https://colegio-asis-api.onrender.com/gestor");
   const data = await res.json();
   cuerpoTabla.innerHTML = "";
   data.forEach((alumno, i) => {
@@ -37,7 +37,7 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
   e.preventDefault();
   const formData = new FormData(e.target);
   const datos = Object.fromEntries(formData);
-  await fetch("http://localhost:3000/gestor/agregar", {
+  await fetch("https://colegio-asis-api.onrender.com/gestor/agregar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos)
@@ -49,7 +49,7 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
 // Eliminar alumno
 async function eliminarAlumno(codigo) {
   if (!confirm("¿Deseas eliminar este alumno?")) return;
-  await fetch("http://localhost:3000/gestor/eliminar", {
+  await fetch("https://colegio-asis-api.onrender.com/gestor/eliminar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ codigo })
