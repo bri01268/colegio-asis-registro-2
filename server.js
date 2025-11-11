@@ -85,6 +85,19 @@ app.get("/gestor/buscar", async (req, res) => {
     res.status(500).send("Error en la búsqueda");
   }
 });
+app.get("/", (req, res) => {
+  res.send(`
+    <h2>✅ API Colegio Asís corriendo correctamente</h2>
+    <p>Usa las rutas:</p>
+    <ul>
+      <li><a href="/gestor">/gestor</a> → Listar alumnos</li>
+      <li>POST /gestor/agregar → Agregar alumno</li>
+      <li>POST /gestor/eliminar → Eliminar alumno</li>
+      <li>GET /gestor/buscar?tipo=dni&valor=123 → Buscar alumno</li>
+    </ul>
+  `);
+});
+
 
 // 🔹 Servidor en Render
 const PORT = process.env.PORT || 3000;
