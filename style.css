@@ -10,7 +10,7 @@ body {
 /* Fondo con transparencia */
 body::before {
   content: "";
-  position: absolute;
+  position: fixed; /* 🔹 Cambiado de absolute a fixed */
   top: 0;
   left: 0;
   width: 100%;
@@ -18,9 +18,11 @@ body::before {
   background-image: url("img/fondo.jpg"); /* Cambia por la ruta de tu imagen */
   background-size: cover;
   background-position: center;
-  opacity: 0.3; /*  Ajusta la transparencia: 0.1 (más transparente) → 1 (sin transparencia) */
-  z-index: -1; /*  Mantiene el fondo detrás del contenido */
+  background-attachment: fixed; /* 🔹 Hace que el fondo se mueva más lento (efecto parallax) */
+  opacity: 0.3; /* Ajusta la transparencia: 0.1 → más transparente, 1 → sin transparencia */
+  z-index: -1; /* Mantiene el fondo detrás del contenido */
 }
+
 .logo1 {
   width: 300px;
   height: 300px;
