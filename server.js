@@ -5,7 +5,20 @@ const bodyParser = require("body-parser");
 const path = require("path");
 
 const app = express();
-app.use(cors());
+
+// ==========================
+//  CORS (DEBE IR AQUÍ)
+// ==========================
+app.use(cors({
+  origin: [
+    "https://bri01268.github.io",
+    "https://bri01268.github.io/colegio-asis-registro-2",
+    "http://localhost:3000"
+  ],
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -87,11 +100,6 @@ app.get("/gestor/buscar", async (req, res) => {
   }
 });
 
-// 🔹 Servir INDEX.HTML
-app.get("/web", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
 // Página raíz de prueba
 app.get("/", (req, res) => {
   res.send(`
@@ -102,7 +110,6 @@ app.get("/", (req, res) => {
       <li>POST /gestor/agregar → Agregar alumno</li>
       <li>POST /gestor/eliminar → Eliminar alumno</li>
       <li>GET /gestor/buscar?tipo=dni&valor=123 → Buscar alumno</li>
-      <li><a href="/web">/web</a> → Abrir index.html</li>
     </ul>
   `);
 });
