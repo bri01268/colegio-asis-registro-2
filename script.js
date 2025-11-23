@@ -1,4 +1,5 @@
-const API = "https://colegio-asis-api.onrender.com";
+console.log("SCRIPT JS CARGADO!");
+const API = "http://localhost:3000";
 
 const modal = document.getElementById("modal");
 const abrirModal = document.getElementById("abrirModal");
@@ -89,4 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
       fila.style.display = coincide ? "" : "none";
     });
   });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM CARGADO, CARGANDO ALUMNOS...");
+    cargarAlumnos();
 });
