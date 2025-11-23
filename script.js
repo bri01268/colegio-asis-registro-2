@@ -1,3 +1,5 @@
+const API = "https://colegio-asis-api.onrender.com";
+
 const modal = document.getElementById("modal");
 const abrirModal = document.getElementById("abrirModal");
 const cerrarModal = document.getElementById("cerrarModal");
@@ -7,11 +9,14 @@ abrirModal.onclick = () => modal.style.display = "block";
 cerrarModal.onclick = () => modal.style.display = "none";
 window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
 
-// Cargar alumnos desde SQL Server
+// ===============================
+// Cargar alumnos desde API Render
+// ===============================
 async function cargarAlumnos() {
-  const res = await fetch("https://colegio-asis-api.onrender.com/gestor");
+  const res = await fetch(`${API}/gestor`);
   const data = await res.json();
   cuerpoTabla.innerHTML = "";
+
   data.forEach((alumno, i) => {
     cuerpoTabla.innerHTML += `
       <tr>
@@ -20,7 +25,7 @@ async function cargarAlumnos() {
         <td>${alumno.dni}</td>
         <td>${alumno.nombre}</td>
         <td>${alumno.sexo}</td>
-        <td>${alumno.fechaNac ? alumno.fechaNac.substring(0,10) : ''}</td>
+        <td>${alumno.fechaNac ? alumno.fechaNac.substring(0,10) : ""}</td>
         <td>${alumno.edad}</td>
         <td>${alumno.tutor}</td>
         <td>${alumno.salon}</td>
@@ -32,51 +37,56 @@ async function cargarAlumnos() {
 
 cargarAlumnos();
 
-// Agregar alumno
+// ===============================
+// AGREGAR ALUMNO
+// ===============================
 document.getElementById("formAlumno").addEventListener("submit", async e => {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const datos = Object.fromEntries(formData);
-  await fetch("https://colegio-asis-api.onrender.com/gestor/agregar", {
+  const datos = Object.fromEntries(new FormData(e.target));
+
+  await fetch(`${API}/gestor/agregar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos)
   });
+
   modal.style.display = "none";
   cargarAlumnos();
 });
 
-// Eliminar alumno
+// ===============================
+// ELIMINAR ALUMNO
+// ===============================
 async function eliminarAlumno(codigo) {
   if (!confirm("¿Deseas eliminar este alumno?")) return;
-  await fetch("https://colegio-asis-api.onrender.com/gestor/eliminar", {
+
+  await fetch(`${API}/gestor/eliminar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ codigo })
   });
+
   cargarAlumnos();
 }
 
-// Buscador local
+// ===============================
+// BUSCADOR LOCAL
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
   const inputBuscar = document.getElementById("buscar");
   const tipoBusqueda = document.getElementById("tipoBusqueda");
-  const tabla = document.getElementById("tablaAlumnos");
-  const filas = tabla.getElementsByTagName("tr");
 
-  inputBuscar.addEventListener("input", function() {
-    const filtro = this.value.toLowerCase();
+  inputBuscar.addEventListener("input", () => {
+    const filtro = inputBuscar.value.toLowerCase();
     const tipo = tipoBusqueda.value;
+    const filas = document.querySelectorAll("#tablaAlumnos tbody tr");
 
-    for (let i = 1; i < filas.length; i++) {
-      const fila = filas[i];
-      const celdas = fila.getElementsByTagName("td");
-      let textoComparar = "";
+    filas.forEach(fila => {
+      const dni = fila.children[2].textContent.toLowerCase();
+      const nombre = fila.children[3].textContent.toLowerCase();
 
-      if (tipo === "dni") textoComparar = celdas[2].textContent.toLowerCase();
-      else if (tipo === "apellidos") textoComparar = celdas[3].textContent.toLowerCase();
-
-      fila.style.display = textoComparar.includes(filtro) ? "" : "none";
-    }
+      const coincide = tipo === "dni" ? dni.includes(filtro) : nombre.includes(filtro);
+      fila.style.display = coincide ? "" : "none";
+    });
   });
 });

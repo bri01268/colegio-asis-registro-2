@@ -2,21 +2,22 @@ const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// ⚙️ Configuración de conexión (Render + Azure SQL)
+// ⚙️ Configuración SQL Server LOCAL
 const dbConfig = {
-  user: process.env.DB_USER || "jeryroldan",       // usuario de Azure
-  password: process.env.DB_PASS || "jefer290423@", // contraseña segura
-  server: process.env.DB_SERVER || "colegio-asis.database.windows.net", // servidor Azure
-  database: process.env.DB_NAME || "alumnosdb",
+  user: "sa",
+  password: "jefer290423",
+  server: "DESKTOP-6HNM4F3\\SQLEXPRESS",
+  database: "alumnosdb",
   options: {
-    encrypt: true,                 // obligatorio en Azure
-    trustServerCertificate: false, // mantener en false
+    encrypt: false,
+    trustServerCertificate: true,
   },
 };
 
@@ -85,20 +86,27 @@ app.get("/gestor/buscar", async (req, res) => {
     res.status(500).send("Error en la búsqueda");
   }
 });
+
+// 🔹 Servir INDEX.HTML
+app.get("/web", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Página raíz de prueba
 app.get("/", (req, res) => {
   res.send(`
-    <h2>✅ API Colegio Asís corriendo correctamente</h2>
+    <h2>API Colegio Asís corriendo correctamente</h2>
     <p>Usa las rutas:</p>
     <ul>
       <li><a href="/gestor">/gestor</a> → Listar alumnos</li>
       <li>POST /gestor/agregar → Agregar alumno</li>
       <li>POST /gestor/eliminar → Eliminar alumno</li>
       <li>GET /gestor/buscar?tipo=dni&valor=123 → Buscar alumno</li>
+      <li><a href="/web">/web</a> → Abrir index.html</li>
     </ul>
   `);
 });
 
-
-// 🔹 Servidor en Render
+// Servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Servidor Node.js corriendo en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
