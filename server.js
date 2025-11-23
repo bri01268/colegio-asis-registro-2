@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 const dbConfig = {
   user: "sa",
   password: "jefer290423",
-  server: "DESKTOP-6HNM4F3\\SQLEXPRESS",
+  server: "DESKTOP-6HNM4F3",
   database: "alumnosdb",
   options: {
     encrypt: false,
