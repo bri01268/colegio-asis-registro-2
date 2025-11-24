@@ -74,7 +74,7 @@ app.post("/gestor/agregar", async (req, res) => {
   }
 });
 
-// 🔹 ELIMINAR alumno
+//  ELIMINAR alumno
 app.post("/gestor/eliminar", async (req, res) => {
   const { codigo } = req.body;
   try {
@@ -89,7 +89,7 @@ app.post("/gestor/eliminar", async (req, res) => {
   }
 });
 
-// 🔹 BUSCAR alumno
+//  BUSCAR alumno
 app.get("/gestor/buscar", async (req, res) => {
   const { tipo, valor } = req.query;
   const columna = tipo === "dni" ? "dni" : "nombre";
