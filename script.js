@@ -11,7 +11,7 @@ cerrarModal.onclick = () => modal.style.display = "none";
 window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
 
 // ===============================
-// Cargar alumnos desde API Render
+// Cargar alumnos desde API
 // ===============================
 async function cargarAlumnos() {
   const res = await fetch(`${API}/gestor`);
@@ -21,16 +21,16 @@ async function cargarAlumnos() {
   data.forEach((alumno, i) => {
     cuerpoTabla.innerHTML += `
       <tr>
-        <td>${i + 1}</td>
+        <td>${alumno.N}</td>
         <td>${alumno.codigo}</td>
         <td>${alumno.dni}</td>
-        <td>${alumno.nombre}</td>
+        <td>${alumno.apellidos_nombres}</td>
         <td>${alumno.sexo}</td>
-        <td>${alumno.fechaNac ? alumno.fechaNac.substring(0,10) : ""}</td>
+        <td>${alumno.fecha_nacimiento ? alumno.fecha_nacimiento.substring(0,10) : ""}</td>
         <td>${alumno.edad}</td>
         <td>${alumno.tutor}</td>
         <td>${alumno.salon}</td>
-        <td><button class="btn-eliminar" onclick="eliminarAlumno('${alumno.codigo}')"><i class="fas fa-trash"></i></button></td>
+        <td><button class="btn-eliminar" onclick="eliminarAlumno('${alumno.dni}')"><i class="fas fa-trash"></i></button></td>
       </tr>
     `;
   });
@@ -45,6 +45,13 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
   e.preventDefault();
   const datos = Object.fromEntries(new FormData(e.target));
 
+  // Renombramos para coincidir con SQL
+  datos.apellidos_nombres = datos.apellidos_nombres || datos.nombre;
+  datos.fecha_nacimiento = datos.fechaNac;
+
+  delete datos.nombre;
+  delete datos.fechaNac;
+
   await fetch(`${API}/gestor/agregar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -58,13 +65,13 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
 // ===============================
 // ELIMINAR ALUMNO
 // ===============================
-async function eliminarAlumno(codigo) {
+async function eliminarAlumno(dni) {
   if (!confirm("¿Deseas eliminar este alumno?")) return;
 
   await fetch(`${API}/gestor/eliminar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ codigo })
+    body: JSON.stringify({ dni })
   });
 
   cargarAlumnos();
@@ -90,9 +97,4 @@ document.addEventListener("DOMContentLoaded", () => {
       fila.style.display = coincide ? "" : "none";
     });
   });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM CARGADO, CARGANDO ALUMNOS...");
-    cargarAlumnos();
 });
