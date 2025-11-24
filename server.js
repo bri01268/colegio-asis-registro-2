@@ -2,11 +2,12 @@ const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
 
 // ==========================
-//  CORS
+//  CORS (DEBE IR AQUÍ)
 // ==========================
 app.use(cors({
   origin: [
@@ -26,9 +27,7 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// ==========================
-//  CONFIG SQL SERVER LOCAL
-// ==========================
+//  Configuración SQL Server LOCAL
 const dbConfig = {
   user: "sa",
   password: "jefer290423",
@@ -40,13 +39,11 @@ const dbConfig = {
   },
 };
 
-// ==========================
-//  ➤ LISTAR TODOS LOS ALUMNOS
-// ==========================
+//  LISTAR todos los alumnos
 app.get("/gestor", async (req, res) => {
   try {
     const pool = await sql.connect(dbConfig);
-    const result = await pool.request().query("SELECT * FROM dbo.Alumnos ORDER BY apellidos_nombres");
+    const result = await pool.request().query("SELECT * FROM dbo.Alumnos");
     res.json(result.recordset);
   } catch (err) {
     console.error("Error al listar:", err);
@@ -54,78 +51,53 @@ app.get("/gestor", async (req, res) => {
   }
 });
 
-// ==========================
-//  ➤ AGREGAR ALUMNO
-// ==========================
+//  AGREGAR alumno
 app.post("/gestor/agregar", async (req, res) => {
-  const {
-    N, codigo, dni, apellidos_nombres, sexo,
-    fecha_nacimiento, edad, tutor, salon
-  } = req.body;
-
+  const { codigo, dni, nombre, sexo, fechaNac, edad, tutor, salon } = req.body;
   try {
     const pool = await sql.connect(dbConfig);
-
     await pool.request()
-      .input("N", sql.Int, N)
       .input("codigo", sql.VarChar, codigo)
       .input("dni", sql.VarChar, dni)
-      .input("apellidos_nombres", sql.VarChar, apellidos_nombres)
+      .input("nombre", sql.VarChar, nombre)
       .input("sexo", sql.VarChar, sexo)
-      .input("fecha_nacimiento", sql.Date, fecha_nacimiento)
+      .input("fechaNac", sql.Date, fechaNac)
       .input("edad", sql.Int, edad)
       .input("tutor", sql.VarChar, tutor)
       .input("salon", sql.VarChar, salon)
-      .query(`
-        INSERT INTO dbo.Alumnos 
-        (N, codigo, dni, apellidos_nombres, sexo, fecha_nacimiento, edad, tutor, salon)
-        VALUES (@N, @codigo, @dni, @apellidos_nombres, @sexo, @fecha_nacimiento, @edad, @tutor, @salon)
-      `);
-
-    res.send("✅ Alumno agregado correctamente");
+      .query(`INSERT INTO dbo.Alumnos (codigo, dni, nombre, sexo, fechaNac, edad, tutor, salon)
+              VALUES (@codigo, @dni, @nombre, @sexo, @fechaNac, @edad, @tutor, @salon)`);
+    res.send(" Alumno agregado correctamente");
   } catch (err) {
     console.error("Error al agregar:", err);
     res.status(500).send("Error al agregar alumno");
   }
 });
 
-// ==========================
-//  ➤ ELIMINAR ALUMNO POR DNI
-// ==========================
+// 🔹 ELIMINAR alumno
 app.post("/gestor/eliminar", async (req, res) => {
-  const { dni } = req.body;
-
+  const { codigo } = req.body;
   try {
     const pool = await sql.connect(dbConfig);
-
     await pool.request()
-      .input("dni", sql.VarChar, dni)
-      .query("DELETE FROM dbo.Alumnos WHERE dni = @dni");
-
-    res.send("🗑️ Alumno eliminado correctamente");
+      .input("codigo", sql.VarChar, codigo)
+      .query("DELETE FROM dbo.Alumnos WHERE codigo = @codigo");
+    res.send(" Alumno eliminado correctamente");
   } catch (err) {
     console.error("Error al eliminar:", err);
     res.status(500).send("Error al eliminar alumno");
   }
 });
 
-// ==========================
-//  ➤ BUSCAR ALUMNO POR DNI O APELLIDOS
-// ==========================
+// 🔹 BUSCAR alumno
 app.get("/gestor/buscar", async (req, res) => {
   const { tipo, valor } = req.query;
-
-  // tipo = "dni" → busca por DNI
-  // tipo = "apellidos" → busca por apellidos_nombres
-  const columna = tipo === "dni" ? "dni" : "apellidos_nombres";
-
+  const columna = tipo === "dni" ? "dni" : "nombre";
   try {
     const pool = await sql.connect(dbConfig);
-
     const result = await pool.request()
       .input("valor", sql.VarChar, `%${valor}%`)
       .query(`SELECT * FROM dbo.Alumnos WHERE ${columna} LIKE @valor`);
-
     res.json(result.recordset);
   } catch (err) {
     console.error("Error al buscar:", err);
@@ -133,26 +105,30 @@ app.get("/gestor/buscar", async (req, res) => {
   }
 });
 
-// ==========================
-//  ➤ PÁGINA DE PRUEBA
-// ==========================
+// Página raíz de prueba
 app.get("/", (req, res) => {
   res.send(`
-    <h2>API Colegio Asís funcionando correctamente ✔</h2>
-    <p>Rutas disponibles:</p>
+    <h2>API Colegio Asís corriendo correctamente</h2>
+    <p>Usa las rutas:</p>
     <ul>
-      <li><a href="/gestor">GET /gestor</a> → Listar alumnos</li>
-      <li>POST /gestor/agregar → Crear alumno</li>
-      <li>POST /gestor/eliminar → Eliminar alumno por DNI</li>
-      <li>GET /gestor/buscar?tipo=dni&valor=8238 → Buscar</li>
+      <li><a href="/gestor">/gestor</a> → Listar alumnos</li>
+      <li>POST /gestor/agregar → Agregar alumno</li>
+      <li>POST /gestor/eliminar → Eliminar alumno</li>
+      <li>GET /gestor/buscar?tipo=dni&valor=123 → Buscar alumno</li>
     </ul>
   `);
 });
 
-// ==========================
-//  SERVIDOR
-// ==========================
+// Servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`)
-);
+
+const server = app.listen(PORT, () => {
+  console.log("API corriendo en puerto", PORT);
+});
+
+server.on("error", err => {
+  if (err.code === "EADDRINUSE") {
+    console.log(" Puerto 3000 ocupado, usando 3001...");
+    app.listen(3001, () => console.log("API corriendo en puerto 3001"));
+  }
+});
