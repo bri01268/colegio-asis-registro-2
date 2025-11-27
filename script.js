@@ -124,3 +124,61 @@ document.getElementById("eliminarRegistro").addEventListener("click", async () =
   dniSeleccionado = null;
   cargarAlumnos();
 });
+
+// ===== FUNCIONES DE PANTALLAS =====
+function mostrarContenido() {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("contenido").style.display = "block";
+}
+
+function mostrarLogin() {
+  document.getElementById("login").style.display = "flex";
+  document.getElementById("contenido").style.display = "none";
+}
+
+// ===== AL CARGAR LA PÁGINA =====
+document.addEventListener("DOMContentLoaded", () => {
+  const logueado = localStorage.getItem("logueado");
+
+  if (logueado === "true") {
+    mostrarContenido();
+  } else {
+    mostrarLogin();
+  }
+});
+
+// ===== BOTÓN LOGIN =====
+document.getElementById("btnLogin").addEventListener("click", () => {
+  const user = document.getElementById("usuario").value.trim();
+  const pass = document.getElementById("clave").value.trim();
+
+  // Credenciales
+  if (user === "admin" && pass === "admin") {
+    localStorage.setItem("logueado", "true");
+    mostrarContenido();
+  } else {
+    document.getElementById("errorLogin").innerText = "Usuario o contraseña incorrectos";
+  }
+});
+
+// ===== BOTÓN CERRAR SESIÓN =====
+const btnLogout = document.createElement("button");
+btnLogout.innerText = "Cerrar Sesión";
+btnLogout.classList.add("btn-cerrar-sesion");
+btnLogout.style.marginLeft = "auto";
+btnLogout.onclick = () => {
+  localStorage.removeItem("logueado");
+  mostrarLogin();
+};
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector(".encabezado").appendChild(btnLogout);
+});
+
+// ===== SEGURIDAD EXTRA =====
+window.addEventListener("beforeunload", () => {
+  const logueado = localStorage.getItem("logueado");
+  if (logueado !== "true") {
+    mostrarLogin();
+  }
+});
+
