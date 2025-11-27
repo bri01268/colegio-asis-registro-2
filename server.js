@@ -17,6 +17,7 @@ app.use(cors({
     "http://localhost:5500",
     "http://localhost:8080",
     "http://localhost:3000",
+    "http://localhost:3001",
     "https://bri01268.github.io",
     "https://bri01268.github.io/colegio-asis-registro-2"
   ],
@@ -87,24 +88,26 @@ app.post("/gestor/agregar", async (req, res) => {
 
     res.send("✅ Alumno agregado correctamente");
   } catch (err) {
-    console.error("Error al agregar:", err);
-    res.status(500).send("Error al agregar alumno");
-  }
+  console.error("Error al agregar:", err);
+  return res.status(500).json({ error: true, mensaje: "No se pudo agregar el alumno" });
+}
+
 });
 
 // 🔹 ELIMINAR alumno
 app.post("/gestor/eliminar", async (req, res) => {
-  const { codigo } = req.body;
+  const { dni } = req.body;
   try {
     const pool = await sql.connect(dbConfig);
     await pool.request()
-      .input("codigo", sql.VarChar, codigo)
-      .query("DELETE FROM dbo.Alumnos WHERE codigo = @codigo");
+      .input("dni", sql.VarChar, dni)
+      .query("DELETE FROM dbo.Alumnos WHERE dni = @dni");
     res.send("🗑️ Alumno eliminado correctamente");
   } catch (err) {
-    console.error("Error al eliminar:", err);
-    res.status(500).send("Error al eliminar alumno");
-  }
+  console.error("Error al eliminar:", err);
+  return res.status(500).json({ error: true, mensaje: "No se pudo eliminar el alumno" });
+}
+
 });
 
 // 🔹 BUSCAR alumno
@@ -130,6 +133,7 @@ app.get("/gestor/buscar", async (req, res) => {
         FROM dbo.Alumnos
         WHERE ${columna} LIKE @valor
       `);
+    res.json(result.recordset);
   } catch (err) {
     console.error("Error al buscar:", err);
     res.status(500).send("Error en la búsqueda");
@@ -151,7 +155,7 @@ app.get("/", (req, res) => {
 });
 
 // Servidor
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const server = app.listen(PORT, () => {
   console.log("API corriendo en puerto", PORT);

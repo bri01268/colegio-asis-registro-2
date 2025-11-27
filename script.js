@@ -1,5 +1,5 @@
 console.log("SCRIPT JS CARGADO!");
-const API = "http://localhost:3000";
+const API = "http://localhost:3001";
 
 const modal = document.getElementById("modal");
 const abrirModal = document.getElementById("abrirModal");
