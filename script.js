@@ -20,7 +20,7 @@ async function cargarAlumnos() {
 
   data.forEach((alumno, i) => {
     cuerpoTabla.innerHTML += `
-      <tr>
+      <tr onclick="seleccionarFila(this, '${alumno.dni}')">
         <td>${alumno.N}</td>
         <td>${alumno.codigo}</td>
         <td>${alumno.dni}</td>
@@ -45,11 +45,8 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
   e.preventDefault();
   const datos = Object.fromEntries(new FormData(e.target));
 
-  // Renombramos para coincidir con SQL
-  datos.apellidos_nombres = datos.apellidos_nombres || datos.nombre;
+  // Renombrar correctamente
   datos.fecha_nacimiento = datos.fechaNac;
-
-  delete datos.nombre;
   delete datos.fechaNac;
 
   await fetch(`${API}/gestor/agregar`, {
@@ -61,6 +58,7 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
   modal.style.display = "none";
   cargarAlumnos();
 });
+
 
 // ===============================
 // ELIMINAR ALUMNO
@@ -97,4 +95,32 @@ document.addEventListener("DOMContentLoaded", () => {
       fila.style.display = coincide ? "" : "none";
     });
   });
+});
+
+let dniSeleccionado = null;
+let filaSeleccionada = null;
+
+function seleccionarFila(fila, dni) {
+  if (filaSeleccionada) {
+    filaSeleccionada.classList.remove("fila-seleccionada");
+  }
+
+  filaSeleccionada = fila;
+  filaSeleccionada.classList.add("fila-seleccionada");
+  dniSeleccionado = dni;
+}
+
+document.getElementById("eliminarRegistro").addEventListener("click", async () => {
+  if (!dniSeleccionado) {
+    alert("⚠️ Seleccione un alumno de la tabla primero");
+    return;
+  }
+
+  if (!confirm(`¿Seguro que deseas eliminar al alumno con DNI: ${dniSeleccionado}?`)) {
+    return;
+  }
+
+  await eliminarAlumno(dniSeleccionado);
+  dniSeleccionado = null;
+  cargarAlumnos();
 });

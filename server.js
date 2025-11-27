@@ -24,10 +24,11 @@ app.use(cors({
   allowedHeaders: ["Content-Type"]
 }));
 
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-//  Configuración SQL Server LOCAL
+// ⚙️ Configuración SQL Server LOCAL
 const dbConfig = {
   user: "sa",
   password: "jefer290423",
@@ -39,7 +40,7 @@ const dbConfig = {
   },
 };
 
-//  LISTAR todos los alumnos
+// 🔹 LISTAR todos los alumnos
 app.get("/gestor", async (req, res) => {
   try {
     const pool = await sql.connect(dbConfig);
@@ -51,30 +52,47 @@ app.get("/gestor", async (req, res) => {
   }
 });
 
-//  AGREGAR alumno
+// 🔹 AGREGAR alumno
 app.post("/gestor/agregar", async (req, res) => {
-  const { codigo, dni, nombre, sexo, fechaNac, edad, tutor, salon } = req.body;
+  const {
+  codigo,
+  dni,
+  apellidos_nombres,
+  sexo,
+  fecha_nacimiento,
+  edad,
+  tutor,
+  salon
+} = req.body;
+
   try {
     const pool = await sql.connect(dbConfig);
     await pool.request()
-      .input("codigo", sql.VarChar, codigo)
-      .input("dni", sql.VarChar, dni)
-      .input("nombre", sql.VarChar, nombre)
-      .input("sexo", sql.VarChar, sexo)
-      .input("fechaNac", sql.Date, fechaNac)
-      .input("edad", sql.Int, edad)
-      .input("tutor", sql.VarChar, tutor)
-      .input("salon", sql.VarChar, salon)
-      .query(`INSERT INTO dbo.Alumnos (codigo, dni, nombre, sexo, fechaNac, edad, tutor, salon)
-              VALUES (@codigo, @dni, @nombre, @sexo, @fechaNac, @edad, @tutor, @salon)`);
-    res.send(" Alumno agregado correctamente");
+  .input("codigo", sql.VarChar, codigo)
+  .input("dni", sql.VarChar, dni)
+  .input("apellidos_nombres", sql.VarChar, apellidos_nombres)
+  .input("sexo", sql.VarChar, sexo)
+  .input("fecha_nacimiento", sql.Date, fecha_nacimiento)
+  .input("edad", sql.Int, edad)
+  .input("tutor", sql.VarChar, tutor)
+  .input("salon", sql.VarChar, salon)
+  .query(`
+    INSERT INTO dbo.Alumnos (
+      codigo, dni, apellidos_nombres, sexo, fecha_nacimiento, edad, tutor, salon
+    )
+    VALUES (
+      @codigo, @dni, @apellidos_nombres, @sexo, @fecha_nacimiento, @edad, @tutor, @salon
+    )
+  `);
+
+    res.send("✅ Alumno agregado correctamente");
   } catch (err) {
     console.error("Error al agregar:", err);
     res.status(500).send("Error al agregar alumno");
   }
 });
 
-//  ELIMINAR alumno
+// 🔹 ELIMINAR alumno
 app.post("/gestor/eliminar", async (req, res) => {
   const { codigo } = req.body;
   try {
@@ -82,23 +100,36 @@ app.post("/gestor/eliminar", async (req, res) => {
     await pool.request()
       .input("codigo", sql.VarChar, codigo)
       .query("DELETE FROM dbo.Alumnos WHERE codigo = @codigo");
-    res.send(" Alumno eliminado correctamente");
+    res.send("🗑️ Alumno eliminado correctamente");
   } catch (err) {
     console.error("Error al eliminar:", err);
     res.status(500).send("Error al eliminar alumno");
   }
 });
 
-//  BUSCAR alumno
+// 🔹 BUSCAR alumno
 app.get("/gestor/buscar", async (req, res) => {
   const { tipo, valor } = req.query;
-  const columna = tipo === "dni" ? "dni" : "nombre";
+  const columna = tipo === "dni" ? "dni" : "apellidos_nombres";
+
   try {
     const pool = await sql.connect(dbConfig);
     const result = await pool.request()
       .input("valor", sql.VarChar, `%${valor}%`)
-      .query(`SELECT * FROM dbo.Alumnos WHERE ${columna} LIKE @valor`);
-    res.json(result.recordset);
+      .query(`
+        SELECT 
+          N,
+          codigo,
+          dni,
+          apellidos_nombres,
+          sexo,
+          fecha_nacimiento,
+          edad,
+          tutor,
+          salon
+        FROM dbo.Alumnos
+        WHERE ${columna} LIKE @valor
+      `);
   } catch (err) {
     console.error("Error al buscar:", err);
     res.status(500).send("Error en la búsqueda");
@@ -128,7 +159,8 @@ const server = app.listen(PORT, () => {
 
 server.on("error", err => {
   if (err.code === "EADDRINUSE") {
-    console.log(" Puerto 3000 ocupado, usando 3001...");
+    console.log("⚠️ Puerto 3000 ocupado, usando 3001...");
     app.listen(3001, () => console.log("API corriendo en puerto 3001"));
   }
 });
+
