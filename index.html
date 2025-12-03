@@ -39,6 +39,7 @@
       <select id="tipoBusqueda" class="select-busqueda">
         <option value="dni">DNI</option>
         <option value="apellidos">Apellidos</option>
+        <option value="fecha_registro">Fecha de Registro</option>
       </select>
       <input type="text" id="buscar" placeholder="Buscar">
       <button class="btn-agregar" id="abrirModal"><i class="fas fa-plus"></i> <img src="iconos/guardar.png" alt="Agregar" class="icono-btn"> </button>
@@ -57,6 +58,8 @@
           <th>Edad</th>
           <th>Tutor</th>
           <th>Salón</th>
+          <th>Fecha de Registro</th>
+          <th>Motivo de derivación</th>
           <th>Acción</th>
         </tr>
       </thead>
@@ -70,20 +73,32 @@
       <span class="cerrar" id="cerrarModal">&times;</span>
       <h3>Agregar Alumno</h3>
       <form id="formAlumno">
-        <input type="text" name="codigo" placeholder="Código" required>
-        <input type="text" name="dni" placeholder="DNI" required>
-        <input type="text" name="apellidos_nombres" placeholder="Apellidos y Nombres" required>
-        <select name="sexo" required>
-          <option value="">Sexo</option>
-          <option value="M">Masculino</option>
-          <option value="F">Femenino</option>
-        </select>
-        <input type="date" name="fecha_nacimiento" required>
-        <input type="number" name="edad" placeholder="Edad" required>
-        <input type="text" name="tutor" placeholder="Tutor" required>
-        <input type="text" name="salon" placeholder="Salón" required>
-        <button type="submit" class="btn-guardar">Guardar</button>
-      </form>
+  <input type="text" name="codigo" placeholder="Código" required>
+  <input type="text" name="dni" placeholder="DNI" required>
+  <input type="text" name="apellidos_nombres" placeholder="Apellidos y Nombres" required>
+
+  <select name="sexo" required>
+    <option value="">Sexo</option>
+    <option value="M">Masculino</option>
+    <option value="F">Femenino</option>
+  </select>
+
+  <label>Fecha de Nacimiento:</label>
+  <input type="date" name="fecha_nacimiento" required>
+
+  <input type="number" name="edad" placeholder="Edad" required>
+  <input type="text" name="tutor" placeholder="Tutor" required>
+  <input type="text" name="salon" placeholder="Salón" required>
+
+  <label>Fecha de Registro:</label>
+  <input type="date" name="fecha_registro" required>
+
+  <label>Motivo de Derivación:</label>
+  <textarea name="motivo_derivacion" placeholder="Describa el motivo..." required></textarea>
+
+  <button type="submit" class="btn-guardar">Guardar</button>
+</form>
+
     </div>
   </div>
 

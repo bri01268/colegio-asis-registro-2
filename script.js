@@ -19,21 +19,35 @@ async function cargarAlumnos() {
   cuerpoTabla.innerHTML = "";
 
   data.forEach((alumno, i) => {
-    cuerpoTabla.innerHTML += `
-      <tr onclick="seleccionarFila(this, '${alumno.dni}')">
-        <td>${alumno.N}</td>
-        <td>${alumno.codigo}</td>
-        <td>${alumno.dni}</td>
-        <td>${alumno.apellidos_nombres}</td>
-        <td>${alumno.sexo}</td>
-        <td>${alumno.fecha_nacimiento ? alumno.fecha_nacimiento.substring(0,10) : ""}</td>
-        <td>${alumno.edad}</td>
-        <td>${alumno.tutor}</td>
-        <td>${alumno.salon}</td>
-        <td><button class="btn-eliminar" onclick="eliminarAlumno('${alumno.dni}')"><i class="fas fa-trash"></i></button></td>
-      </tr>
-    `;
-  });
+  cuerpoTabla.innerHTML += `
+    <tr onclick="seleccionarFila(this, '${alumno.dni}')">
+      <td>${alumno.N}</td>
+      <td>${alumno.codigo}</td>
+      <td>${alumno.dni}</td>
+      <td>${alumno.apellidos_nombres}</td>
+      <td>${alumno.sexo}</td>
+      <td>${alumno.fecha_nacimiento ? alumno.fecha_nacimiento.substring(0,10) : ""}</td>
+      <td>${alumno.edad}</td>
+      <td>${alumno.tutor}</td>
+      <td>${alumno.salon}</td>
+      <td>
+  <input type="date"
+         value="${alumno.fecha_registro ? alumno.fecha_registro.substring(0,10) : ''}"
+         onchange="actualizarCampo('${alumno.dni}', 'fecha_registro', this.value)">
+</td>
+
+<td>
+  <input type="text"
+         value="${alumno.motivo_derivacion || ''}"
+         placeholder="Motivo..."
+         onchange="actualizarCampo('${alumno.dni}', 'motivo_derivacion', this.value)">
+</td>
+
+      <td><button class="btn-eliminar" onclick="eliminarAlumno('${alumno.dni}')"><i class="fas fa-trash"></i></button></td>
+    </tr>
+  `;
+});
+
 }
 
 cargarAlumnos();
@@ -45,8 +59,8 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
   e.preventDefault();
   const datos = Object.fromEntries(new FormData(e.target));
 
-  // Renombrar correctamente
-  datos.fecha_nacimiento = datos.fechaNac;
+  // Normalizar nombres de campos
+  datos.fecha_nacimiento = datos.fecha_nacimiento || datos.fechaNac;
   delete datos.fechaNac;
 
   await fetch(`${API}/gestor/agregar`, {
@@ -58,6 +72,7 @@ document.getElementById("formAlumno").addEventListener("submit", async e => {
   modal.style.display = "none";
   cargarAlumnos();
 });
+
 
 
 // ===============================
@@ -76,6 +91,20 @@ async function eliminarAlumno(dni) {
 }
 
 // ===============================
+// ACTUALIZAR CAMPO EN LINEA
+// ===============================
+async function actualizarCampo(dni, campo, valor) {
+  await fetch(`${API}/gestor/actualizar`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ dni, campo, valor })
+  });
+
+  console.log(`Campo ${campo} de DNI ${dni} actualizado a: ${valor}`);
+}
+
+
+// ===============================
 // BUSCADOR LOCAL
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
@@ -90,12 +119,23 @@ document.addEventListener("DOMContentLoaded", () => {
     filas.forEach(fila => {
       const dni = fila.children[2].textContent.toLowerCase();
       const nombre = fila.children[3].textContent.toLowerCase();
+      const fechaRegistro = fila.children[9].textContent.toLowerCase();
+      
+      let coincide = false;
 
-      const coincide = tipo === "dni" ? dni.includes(filtro) : nombre.includes(filtro);
+      if (tipo === "dni") {
+        coincide = dni.includes(filtro);
+      } else if (tipo === "apellidos") {
+        coincide = nombre.includes(filtro);
+      } else if (tipo === "fecha_registro") {
+        coincide = fechaRegistro.includes(filtro);
+      }
+
       fila.style.display = coincide ? "" : "none";
     });
   });
 });
+
 
 let dniSeleccionado = null;
 let filaSeleccionada = null;

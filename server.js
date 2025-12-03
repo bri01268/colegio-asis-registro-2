@@ -54,45 +54,53 @@ app.get("/gestor", async (req, res) => {
 });
 
 // 🔹 AGREGAR alumno
+// 🔹 AGREGAR alumno
 app.post("/gestor/agregar", async (req, res) => {
   const {
-  codigo,
-  dni,
-  apellidos_nombres,
-  sexo,
-  fecha_nacimiento,
-  edad,
-  tutor,
-  salon
-} = req.body;
+    codigo,
+    dni,
+    apellidos_nombres,
+    sexo,
+    fecha_nacimiento,
+    edad,
+    tutor,
+    salon,
+    fecha_registro,
+    motivo_derivacion
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
     await pool.request()
-  .input("codigo", sql.VarChar, codigo)
-  .input("dni", sql.VarChar, dni)
-  .input("apellidos_nombres", sql.VarChar, apellidos_nombres)
-  .input("sexo", sql.VarChar, sexo)
-  .input("fecha_nacimiento", sql.Date, fecha_nacimiento)
-  .input("edad", sql.Int, edad)
-  .input("tutor", sql.VarChar, tutor)
-  .input("salon", sql.VarChar, salon)
-  .query(`
-    INSERT INTO dbo.Alumnos (
-      codigo, dni, apellidos_nombres, sexo, fecha_nacimiento, edad, tutor, salon
-    )
-    VALUES (
-      @codigo, @dni, @apellidos_nombres, @sexo, @fecha_nacimiento, @edad, @tutor, @salon
-    )
-  `);
+      .input("codigo", sql.VarChar, codigo)
+      .input("dni", sql.VarChar, dni)
+      .input("apellidos_nombres", sql.VarChar, apellidos_nombres)
+      .input("sexo", sql.VarChar, sexo)
+      .input("fecha_nacimiento", sql.Date, fecha_nacimiento)
+      .input("edad", sql.Int, edad)
+      .input("tutor", sql.VarChar, tutor)
+      .input("salon", sql.VarChar, salon)
+      .input("fecha_registro", sql.Date, fecha_registro)
+      .input("motivo_derivacion", sql.VarChar, motivo_derivacion)
+      .query(`
+        INSERT INTO dbo.Alumnos (
+          codigo, dni, apellidos_nombres, sexo, fecha_nacimiento, edad, tutor, salon,
+          fecha_registro, motivo_derivacion
+        )
+        VALUES (
+          @codigo, @dni, @apellidos_nombres, @sexo, @fecha_nacimiento, @edad, @tutor, @salon,
+          @fecha_registro, @motivo_derivacion
+        )
+      `);
 
-    res.send("✅ Alumno agregado correctamente");
+    res.json({ status: "ok", mensaje: "Alumno agregado correctamente" });
+
   } catch (err) {
-  console.error("Error al agregar:", err);
-  return res.status(500).json({ error: true, mensaje: "No se pudo agregar el alumno" });
-}
-
+    console.error("Error al agregar:", err);
+    return res.status(500).json({ error: true, mensaje: "No se pudo agregar el alumno" });
+  }
 });
+
 
 // 🔹 ELIMINAR alumno
 app.post("/gestor/eliminar", async (req, res) => {
@@ -109,6 +117,30 @@ app.post("/gestor/eliminar", async (req, res) => {
 }
 
 });
+
+// 🔹 ACTUALIZAR CAMPO EN LINEA
+app.put("/gestor/actualizar", async (req, res) => {
+  const { dni, campo, valor } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("valor", sql.VarChar, valor)
+      .input("dni", sql.VarChar, dni)
+      .query(`
+        UPDATE dbo.Alumnos
+        SET ${campo} = @valor
+        WHERE dni = @dni
+      `);
+
+    res.json({ status: "ok" });
+
+  } catch (err) {
+    console.error("Error al actualizar:", err);
+    res.status(500).json({ error: true });
+  }
+});
+
 
 // 🔹 BUSCAR alumno
 app.get("/gestor/buscar", async (req, res) => {
