@@ -200,3 +200,9 @@ server.on("error", err => {
   }
 });
 
+let poolPromise = sql.connect(dbConfig).then(pool => {
+  console.log("Conectado a SQL Server");
+  return pool;
+}).catch(err => {
+  console.log("Error al conectar a SQL Server", err);
+});
