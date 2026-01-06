@@ -2,6 +2,7 @@ const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+require("dotenv").config();
 const path = require("path");
 
 const app = express();
@@ -21,7 +22,7 @@ app.use(cors({
     "https://bri01268.github.io",
     "https://bri01268.github.io/colegio-asis-registro-2"
   ],
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
 
@@ -29,17 +30,23 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// ⚙️ Configuración SQL Server LOCAL
+// ⚙️ Configuración Azure SQL
 const dbConfig = {
-  user: "sa",
-  password: "jefer290423",
-  server: "DESKTOP-6HNM4F3",
-  database: "alumnosdb",
+  user: "adminsql",              // ej: adminsql
+  password: "Jefer290423@",          // tu clave
+  server: "jeryroldan.database.windows.net",          // ej: mi-sql-server.database.windows.net
+  database: "alumnosdb",          // ej: alumnosdb
   options: {
-    encrypt: false,
-    trustServerCertificate: true,
+    encrypt: true,                        // Azure requiere encrypt
+    trustServerCertificate: false
   },
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  }
 };
+
 
 // 🔹 LISTAR todos los alumnos
 app.get("/gestor", async (req, res) => {
@@ -187,7 +194,7 @@ app.get("/", (req, res) => {
 });
 
 // Servidor
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3200;
 
 const server = app.listen(PORT, () => {
   console.log("API corriendo en puerto", PORT);
@@ -195,8 +202,8 @@ const server = app.listen(PORT, () => {
 
 server.on("error", err => {
   if (err.code === "EADDRINUSE") {
-    console.log("⚠️ Puerto 3000 ocupado, usando 3001...");
-    app.listen(3001, () => console.log("API corriendo en puerto 3001"));
+    console.log("⚠️ Puerto 3000 ocupado, usando 3200...");
+    app.listen(3001, () => console.log("API corriendo en puerto 3200"));
   }
 });
 

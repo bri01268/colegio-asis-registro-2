@@ -1,5 +1,8 @@
 console.log("SCRIPT JS CARGADO!");
-const API = "http://localhost:3001";
+const API = location.hostname === "localhost" || location.hostname === "127.0.0.1"
+  ? "http://localhost:3200"
+  : "https://TU-API.onrender.com";
+
 
 const modal = document.getElementById("modal");
 const abrirModal = document.getElementById("abrirModal");
@@ -11,14 +14,22 @@ cerrarModal.onclick = () => modal.style.display = "none";
 window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
 
 // ===============================
-// Cargar alumnos desde API
+// Cargar alumnos
 // ===============================
 async function cargarAlumnos() {
-  const res = await fetch(`${API}/gestor`);
-  const data = await res.json();
-  cuerpoTabla.innerHTML = "";
+  try {
+    const res = await fetch(`${API}/gestor`);
+    console.log("STATUS /gestor:", res.status);
+    const data = await res.json();
+    cuerpoTabla.innerHTML = "";  // ✅ limpiar antes de pintar
+    console.log("DATA /gestor:", data);
+    if (!cuerpoTabla) {
+  console.error("No existe #cuerpoTabla");
+  return;
+}
 
-  data.forEach((alumno, i) => {
+ 
+  data.forEach(alumno => {
   cuerpoTabla.innerHTML += `
     <tr onclick="seleccionarFila(this, '${alumno.dni}')">
       <td>${alumno.N}</td>
@@ -48,9 +59,12 @@ async function cargarAlumnos() {
   `;
 });
 
+} catch (error) {
+    console.error("Error al cargar alumnos:", error);
+    alert("No se pudo conectar con el servidor");
+  }
 }
 
-cargarAlumnos();
 
 // ===============================
 // AGREGAR ALUMNO
@@ -119,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     filas.forEach(fila => {
       const dni = fila.children[2].textContent.toLowerCase();
       const nombre = fila.children[3].textContent.toLowerCase();
-      const fechaRegistro = fila.children[9].textContent.toLowerCase();
+      const fechaRegistro = fila.children[9].querySelector("input")?.value?.toLowerCase() || "";
       
       let coincide = false;
 
@@ -169,6 +183,7 @@ document.getElementById("eliminarRegistro").addEventListener("click", async () =
 function mostrarContenido() {
   document.getElementById("login").style.display = "none";
   document.getElementById("contenido").style.display = "block";
+  cargarAlumnos(); // Cargar alumnos al mostrar contenido
 }
 
 function mostrarLogin() {
