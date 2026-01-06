@@ -1,7 +1,7 @@
 console.log("SCRIPT JS CARGADO!");
 const API = location.hostname === "localhost" || location.hostname === "127.0.0.1"
   ? "http://localhost:3200"
-  : "https://TU-API.onrender.com";
+  : "https://colegio-asis-registro.onrender.com";
 
 
 const modal = document.getElementById("modal");
