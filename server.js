@@ -11,20 +11,11 @@ const app = express();
 //  CORS (DEBE IR AQUÍ)
 // ==========================
 app.use(cors({
-  origin: [
-    "http://127.0.0.1:5500",
-    "http://127.0.0.1:8080",
-    "http://127.0.0.1:5501",
-    "http://localhost:5500",
-    "http://localhost:8080",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://bri01268.github.io",
-    "https://bri01268.github.io/colegio-asis-registro-2"
-  ],
+  origin: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
+
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
